@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <header>
+        <h1>Calculadora de notas</h1>
+    </header>
+    <main>
+        <form action="#" id="form">
+            <fieldset id="unidad-1">
+                <legend>Unidad de Lógica</legend>
+                <div>
+                    <label for="parcial-1" style="margin-right: 51px;">Parcial</label>
+                    <select name="" id="parcial-1">
+                        <option value="10">10</option>
+                        <option value="9">9</option>
+                        <option value="8">8</option>
+                        <option value="7">7</option>
+                        <option value="6">6</option>
+                        <option value="5">5</option>
+                        <option value="4">4</option>
+                        <option value="0">Ausente</option>
+                        <option value="2">Desaprobado</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="rec-1">Recuperatorio</label>
+                    <select name="" id="rec-1">
+                        <option value="10">10</option>
+                        <option value="9">9</option>
+                        <option value="8">8</option>
+                        <option value="7">7</option>
+                        <option value="6">6</option>
+                        <option value="5">5</option>
+                        <option value="4">4</option>
+                        <option value="0" selected>Ausente</option>
+                        <option value="2">Desaprobado</option>
+                    </select>
+                </div>
+                <div>
+                    <p id="nota-unidad-1">Nota de unidad:</p>
+                </div>
+            </fieldset>
+            <fieldset id="unidad-2">
+                <legend>Unidad de Programación</legend>
+                <div>
+                    <label for="parcial-2" style="margin-right: 51px;">Parcial</label>
+                    <select name="" id="parcial-2">
+                        <option value="10">10</option>
+                        <option value="9">9</option>
+                        <option value="8">8</option>
+                        <option value="7">7</option>
+                        <option value="6">6</option>
+                        <option value="5">5</option>
+                        <option value="4">4</option>
+                        <option value="0">Ausente</option>
+                        <option value="2">Desaprobado</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="rec-2">Recuperatorio</label>
+                    <select name="" id="rec-2">
+                        <option value="10">10</option>
+                        <option value="9">9</option>
+                        <option value="8">8</option>
+                        <option value="7">7</option>
+                        <option value="6">6</option>
+                        <option value="5">5</option>
+                        <option value="4">4</option>
+                        <option value="0" selected>Ausente</option>
+                        <option value="2">Desaprobado</option>
+                    </select>
+                </div>
+                <div>
+                    <p id="nota-unidad-2">Nota de unidad:</p>
+                </div>
+            </fieldset>
+        </form>
+        <div style="width: 300px;">
+            <p>Nota final:</p>
+            <p id="nota-final"></p>
+        </div>
+        <button id="calcular">Calcular</button>
+    </main>
+</body>
+<style>
+    *{
+        box-sizing: border-box;
+        font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;
+    }
+    h1{
+        text-align: center;
+    }
+    main{
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    fieldset{
+        width: 300px;
+    }
+    legend {
+        font-size: 12px;
+        text-transform: uppercase;
+    }
+    #unidad-2{
+        margin-top: 10px;
+    }
+    select {
+        margin-top: 15px;
+    }
+    #nota-unidad-2{
+        margin-top: 15px;
+    }
+    #nota-final{
+        min-height: 19px;
+        text-align: center;
+        font-weight: bold;
+    }
+    #calcular {
+        margin-top: 50px;
+        width: 300px;
+        height: 40px;
+        border-radius: 5px;
+        font-weight: bold;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+    }
+</style>
+
+<script>
+    const WORD = ["AUSENTE", "PENDIENTE DE APROBACIÓN","DESAPROBADO", "PROMOCIONADO", "(Cuatro)", "(Cinco)", "(Seis)", "(Siete)", "(Ocho)", "(Nueve)", "(Diez)"];
+    const FORM = document.getElementById("form"),
+          BTN = document.getElementById("calcular"),
+          NU1 = document.getElementById("nota-unidad-1"),
+          NU2 = document.getElementById("nota-unidad-2"),
+          NF = document.getElementById("nota-final");
+
+
+    FORM[1].addEventListener("change", () => {
+        unitGrade(grade(FORM[1],FORM[2]),NU1);
+        disableAllInput();
+    });
+
+    FORM[2].addEventListener("change", () => {
+        unitGrade(grade(FORM[1],FORM[2]),NU1);
+        disableAllInput();
+    });
+
+    FORM[4].addEventListener("change", () => {
+        unitGrade(grade(FORM[4],FORM[5]),NU2);
+    });
+
+    FORM[5].addEventListener("change", () => {
+        unitGrade(grade(FORM[4],FORM[5]),NU2);
+    });
+
+    BTN.addEventListener("click", () => { 
+        gradeInActa();
+    });
+
+
+    function firstGrades(){
+        unitGrade(grade(FORM[1],FORM[2]),NU1);
+        unitGrade(grade(FORM[4],FORM[5]),NU2); 
+    }
+    firstGrades();
+
+    function unitGrade(a,b){
+        b.textContent = `Nota de unidad: ${a}`;
+        eraseGradeInActa();
+    };
+
+    function disableInput(a){
+        a.selectedIndex = 7;
+        a.setAttribute("disabled", "true");
+    };
+
+    function grade(a,b) {
+        disableRec(a,b);
+
+        let n = gradeVal(a,b);
+
+        if (n > 3){
+            return n;
+        } else if (n === 2 && Number(a.value) > Number(b.value)){
+            return WORD[0];
+        } else{
+            return WORD[n];
+        }
+    };
+
+    function disableRec(a,b){
+        if (Number(a.value) > 5){
+            disableInput(b);
+        } else {
+            b.removeAttribute("disabled");
+        }
+    };
+
+    function gradeVal(a,b){
+        let n = Number(a.value) >= Number(b.value) ? Number(a.value) : Number(b.value);
+        return n;
+    };
+
+    function disableAllInput(){
+        let n = gradeVal(FORM[1],FORM[2]);
+
+        if (n < 3) {
+            disableInput(FORM[4]);
+            disableInput(FORM[5]);
+
+            NU2.textContent = "Nota de unidad:";
+        } else {
+            FORM[4].removeAttribute("disabled");
+            unitGrade(grade(FORM[4],FORM[5]),NU2);
+        }
+    };
+    
+    function eraseGradeInActa(){
+        NF.textContent = "";
+    };
+
+    function gradeInActa(){
+        let n = gradeVal(FORM[1],FORM[2]),
+            m = gradeVal(FORM[4],FORM[5]);
+
+        eraseGradeInActa();
+
+        if (n < 4 || m < 4){
+            if(n < 4){
+                ausDes(NU1,NF);
+            } else {
+                ausDes(NU2,NF);
+            }
+        } else if ((n > 6 && m > 6) || ((n > 7 && m >=6) || (m > 7 && n >=6))){
+            let d = Math.round((n + m) / 2);
+
+            NF.textContent = `${d} ${WORD[d]} ${WORD[3]}`;
+        } else {
+            NF.textContent = `${WORD[1]}`;
+        }
+        
+    };
+
+    function ausDes(a,b){
+        let ar = a.textContent.split(" ");
+        b.textContent = `${ar[3]}`;
+    };
+</script>
+</html>
